@@ -1,0 +1,37 @@
+version: '3.8'
+
+volumes:
+  pg_demo:
+
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: cloud
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Asdqwe!23
+    volumes:
+      - pg_demo:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5433:5432"
+    networks:
+      - app-network
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://db:5432/cloud'
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: Asdqwe!23
+      JAVA_OPTS: '-Xmx512m'
+    volumes:
+      - ./app/uploads:/app/uploads
+    networks:
+      - app-network
+
+networks:
+  app-network:
